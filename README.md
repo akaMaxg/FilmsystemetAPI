@@ -1,14 +1,14 @@
 ﻿# Filmsystemet
 
 [X] Det ska gå att lagra personer med grundläggande information om dem som namn och epostadresser.
-[ ] Systemet ska kunna lagra ett obegränsat antal genres som de gillar. Varje genre ska ha en titel och en kort beskrivning.
-[ ] Varje person ska kunna vara intresserad av valfritt antal genres
-[ ] Det ska gå att lagra ett obegränsat antal länkar (till filmer) till varje genre för varje person. Om en person lägger in en länk så är den alltså 
+[X] Systemet ska kunna lagra ett obegränsat antal genres som de gillar. Varje genre ska ha en titel och en kort beskrivning.
+[X] Varje person ska kunna vara intresserad av valfritt antal genres
+[] Det ska gå att lagra ett obegränsat antal länkar (till filmer) till varje genre för varje person. Om en person lägger in en länk så är den alltså 
 kopplad både till den personen och till den genren.
-[ ] Skapa applikationen med hänsyn till Repository pattern om ni vill. 
+[-] Skapa applikationen med hänsyn till Repository pattern om ni vill. 
 
 [X] Hämta alla personer i systemet
-[ ] Hämta alla genrer som är kopplade till en specifik person
+[X] Hämta alla genrer som är kopplade till en specifik person
 [ ] Hämta alla filmer som är kopplade till en specifik person
 [ ] Lägga in och hämta "rating" på filmer kopplat till en person
 [ ] Koppla en person till en ny genre

@@ -12,8 +12,6 @@ namespace Filmsystemet.Data
         public DbSet<LinkPersonGenreMovie> LinkPersonGenreMovies { get; set; }
         public DbSet<GenreMovie> GenreMovies { get; set; }
 
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configurations of the entity mappings and relationships
@@ -21,7 +19,7 @@ namespace Filmsystemet.Data
             //PKs of single keys
 
             modelBuilder.Entity<Person>()
-                .HasKey(p => p.Id);
+        .HasKey(p => p.Id);
 
             modelBuilder.Entity<Movie>()
                 .HasKey(m => m.Id);
@@ -29,53 +27,50 @@ namespace Filmsystemet.Data
             modelBuilder.Entity<Genre>()
                 .HasKey(g => g.Id);
 
-
-            //Person-Genre table
-
+            // Person-Genre table
             modelBuilder.Entity<PersonGenre>()
                 .HasKey(pg => new { pg.PersonId, pg.GenreId });
 
             modelBuilder.Entity<PersonGenre>()
-                .HasOne(pg => pg.Person)
-                .WithMany(p => p.PersonGenres)
+                .HasOne<Person>()
+                .WithMany()
                 .HasForeignKey(pg => pg.PersonId);
 
             modelBuilder.Entity<PersonGenre>()
-                .HasOne(pg => pg.Genre)
-                .WithMany(g => g.PersonGenres)
+                .HasOne<Genre>()
+                .WithMany()
                 .HasForeignKey(pg => pg.GenreId);
 
-            //Link to movie & Genre by Person
+            // LinkPersonGenreMovie table
             modelBuilder.Entity<LinkPersonGenreMovie>()
                 .HasKey(l => new { l.PersonId, l.GenreId, l.MovieId });
 
             modelBuilder.Entity<LinkPersonGenreMovie>()
-                .HasOne(l => l.Person)
+                .HasOne<Person>()
                 .WithMany()
                 .HasForeignKey(l => l.PersonId);
 
             modelBuilder.Entity<LinkPersonGenreMovie>()
-                .HasOne(l => l.Genre)
+                .HasOne<Genre>()
                 .WithMany()
                 .HasForeignKey(l => l.GenreId);
 
             modelBuilder.Entity<LinkPersonGenreMovie>()
-                .HasOne(l => l.Movie)
+                .HasOne<Movie>()
                 .WithMany()
                 .HasForeignKey(l => l.MovieId);
 
-
-            //Genre-Movie Table
+            // Genre-Movie table
             modelBuilder.Entity<GenreMovie>()
                 .HasKey(gm => new { gm.MovieId, gm.GenreId });
 
             modelBuilder.Entity<GenreMovie>()
-                .HasOne(gm => gm.Genre)
+                .HasOne<Genre>()
                 .WithMany()
                 .HasForeignKey(gm => gm.GenreId);
 
             modelBuilder.Entity<GenreMovie>()
-                .HasOne(gm => gm.Movie)
+                .HasOne<Movie>()
                 .WithMany()
                 .HasForeignKey(gm => gm.MovieId);
 

@@ -3,6 +3,7 @@ using Filmsystemet.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Filmsystemet.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230605110339_UppdatedGenreTable")]
+    partial class UppdatedGenreTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,19 +56,9 @@ namespace Filmsystemet.Migrations
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 
-                    b.Property<int>("GenreId1")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MovieId1")
-                        .HasColumnType("int");
-
                     b.HasKey("MovieId", "GenreId");
 
                     b.HasIndex("GenreId");
-
-                    b.HasIndex("GenreId1");
-
-                    b.HasIndex("MovieId1");
 
                     b.ToTable("GenreMovies");
                 });
@@ -151,6 +144,9 @@ namespace Filmsystemet.Migrations
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
                     b.HasKey("PersonId", "GenreId");
 
                     b.HasIndex("GenreId");
@@ -158,29 +154,47 @@ namespace Filmsystemet.Migrations
                     b.ToTable("PersonGenres");
                 });
 
+            modelBuilder.Entity("GenreMovie", b =>
+                {
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MoviesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("GenreId", "MoviesId");
+
+                    b.HasIndex("MoviesId");
+
+                    b.ToTable("GenreMovie");
+                });
+
+            modelBuilder.Entity("GenrePerson", b =>
+                {
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PersonsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("GenreId", "PersonsId");
+
+                    b.HasIndex("PersonsId");
+
+                    b.ToTable("GenrePerson");
+                });
+
             modelBuilder.Entity("Filmsystemet.Models.GenreMovie", b =>
                 {
-                    b.HasOne("Filmsystemet.Models.Genre", null)
+                    b.HasOne("Filmsystemet.Models.Genre", "Genre")
                         .WithMany()
                         .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Filmsystemet.Models.Genre", "Genre")
-                        .WithMany()
-                        .HasForeignKey("GenreId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Filmsystemet.Models.Movie", null)
-                        .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Filmsystemet.Models.Movie", "Movie")
                         .WithMany()
-                        .HasForeignKey("MovieId1")
+                        .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -191,6 +205,52 @@ namespace Filmsystemet.Migrations
 
             modelBuilder.Entity("Filmsystemet.Models.LinkPersonGenreMovie", b =>
                 {
+                    b.HasOne("Filmsystemet.Models.Genre", "Genre")
+                        .WithMany()
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Filmsystemet.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Filmsystemet.Models.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Genre");
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("Filmsystemet.PersonGenre", b =>
+                {
+                    b.HasOne("Filmsystemet.Models.Genre", "Genre")
+                        .WithMany("PersonGenres")
+                        .HasForeignKey("GenreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Filmsystemet.Models.Person", "Person")
+                        .WithMany("PersonGenres")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Genre");
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("GenreMovie", b =>
+                {
                     b.HasOne("Filmsystemet.Models.Genre", null)
                         .WithMany()
                         .HasForeignKey("GenreId")
@@ -199,18 +259,12 @@ namespace Filmsystemet.Migrations
 
                     b.HasOne("Filmsystemet.Models.Movie", null)
                         .WithMany()
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Filmsystemet.Models.Person", null)
-                        .WithMany()
-                        .HasForeignKey("PersonId")
+                        .HasForeignKey("MoviesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Filmsystemet.PersonGenre", b =>
+            modelBuilder.Entity("GenrePerson", b =>
                 {
                     b.HasOne("Filmsystemet.Models.Genre", null)
                         .WithMany()
@@ -220,9 +274,19 @@ namespace Filmsystemet.Migrations
 
                     b.HasOne("Filmsystemet.Models.Person", null)
                         .WithMany()
-                        .HasForeignKey("PersonId")
+                        .HasForeignKey("PersonsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Filmsystemet.Models.Genre", b =>
+                {
+                    b.Navigation("PersonGenres");
+                });
+
+            modelBuilder.Entity("Filmsystemet.Models.Person", b =>
+                {
+                    b.Navigation("PersonGenres");
                 });
 #pragma warning restore 612, 618
         }
