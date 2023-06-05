@@ -19,22 +19,6 @@ namespace Filmsystemet.Controllers
             this.persons = context.Persons;
         }
 
-        [HttpGet("PersonGenres")]
-        public ActionResult GetPersonGenres()
-        {
-            var query = from person in context.Persons
-                        join personGenre in context.PersonGenres on person.Id equals personGenre.PersonId
-                        join genre in context.Genres on personGenre.GenreId equals genre.Id
-                        select new
-                        {
-                            PersonName = person.FirstName,
-                            GenreName = genre.Name,
-                            GenreDescription = genre.Description,
-                        };
-
-            return Ok(query.ToList());
-        }
-
         [HttpGet("All genres for one person")]
         public IActionResult GetPersonGenres(int personId)
         {
@@ -52,9 +36,43 @@ namespace Filmsystemet.Controllers
             return Ok(query.ToList());
         }
 
+        [HttpGet("All Ratings for one person")]
+        public IActionResult GetPersonRatings(int personId)
+        {
+            var query = from link in context.LinkPersonGenreMovies
+                        join movie in context.Movies on link.MovieId equals movie.Id
+                        join person in context.Persons on link.PersonId equals person.Id
+                        where link.PersonId == 1
+                        select new
+                        {
+                            PersonName = person.FirstName,
+                            Rating = link.Rating,
+                            MovieTitle = movie.Title
+                        };
+
+            return Ok(query.ToList());
+        }
+
+        [HttpGet("All Movies for one person")]
+        public IActionResult GetPersonMovies(int personId)
+        {
+            var query = from link in context.LinkPersonGenreMovies
+                        join movie in context.Movies on link.MovieId equals movie.Id
+                        join genre in context.Genres on link.GenreId equals genre.Id
+                        join person in context.Persons on link.PersonId equals person.Id
+                        select new
+                        {
+                            PersonName = person.FirstName,
+                            MovieName = movie.Title,
+                            GenreName = genre.Name
+                        };
+
+            return Ok(query.ToList());
+        }
+
 
         // GET: api/persons
-        [HttpGet]
+        [HttpGet("Retrieve all persons")]
         public async Task<ActionResult<List<Person>>> GetPersons()
         {
             // Retrieve all persons from the database
@@ -88,40 +106,6 @@ namespace Filmsystemet.Controllers
             return CreatedAtAction(nameof(GetPerson), new { id = person.Id }, person);
         }
 
-        // PUT: api/persons/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePerson(int id, Person person)
-        {
-            if (id != person.Id)
-            {
-                // If the provided ID does not match the person's ID, return HTTP 400 Bad Request status
-                return BadRequest();
-            }
-
-            // Set the person's state as modified in the context to track changes
-            context.Entry(person).State = EntityState.Modified;
-
-            try
-            {
-                // Save the changes to the database
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PersonExists(id))
-                {
-                    // If the person does not exist, return HTTP 404 Not Found status
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            // Return HTTP 204 No Content status indicating the successful update
-            return NoContent();
-        }
         private bool PersonExists(int id)
         {
             // Check if a person with the specified ID exists in the persons DbSet

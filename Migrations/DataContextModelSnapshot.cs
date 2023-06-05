@@ -47,25 +47,15 @@ namespace Filmsystemet.Migrations
 
             modelBuilder.Entity("Filmsystemet.Models.GenreMovie", b =>
                 {
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 
-                    b.Property<int>("GenreId1")
+                    b.Property<int>("MovieId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MovieId1")
-                        .HasColumnType("int");
+                    b.HasKey("GenreId", "MovieId");
 
-                    b.HasKey("MovieId", "GenreId");
-
-                    b.HasIndex("GenreId");
-
-                    b.HasIndex("GenreId1");
-
-                    b.HasIndex("MovieId1");
+                    b.HasIndex("MovieId");
 
                     b.ToTable("GenreMovies");
                 });
@@ -82,8 +72,10 @@ namespace Filmsystemet.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("MovieLink")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
 
                     b.HasKey("PersonId", "GenreId", "MovieId");
 
@@ -101,10 +93,6 @@ namespace Filmsystemet.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("GenreId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ReleaseYear")
                         .HasColumnType("int");
@@ -166,27 +154,11 @@ namespace Filmsystemet.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Filmsystemet.Models.Genre", "Genre")
-                        .WithMany()
-                        .HasForeignKey("GenreId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Filmsystemet.Models.Movie", null)
                         .WithMany()
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Filmsystemet.Models.Movie", "Movie")
-                        .WithMany()
-                        .HasForeignKey("MovieId1")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Genre");
-
-                    b.Navigation("Movie");
                 });
 
             modelBuilder.Entity("Filmsystemet.Models.LinkPersonGenreMovie", b =>

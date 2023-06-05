@@ -9,10 +9,10 @@ kopplad både till den personen och till den genren.
 
 [X] Hämta alla personer i systemet
 [X] Hämta alla genrer som är kopplade till en specifik person
-[ ] Hämta alla filmer som är kopplade till en specifik person
-[ ] Lägga in och hämta "rating" på filmer kopplat till en person
-[ ] Koppla en person till en ny genre
-[ ] Lägga in nya länkar för en specifik person och en specifik genre
+[X] Hämta alla filmer som är kopplade till en specifik person
+[X] Lägga in och hämta "rating" på filmer kopplat till en person
+[X] Koppla en person till en ny genre
+[X] Lägga in nya länkar för en specifik person och en specifik genre
 [ ] Få förslag på filmer i en viss genre från ett externt API, t.ex TMDB.Links to an external site.
 
 🕹️ Testa ditt API

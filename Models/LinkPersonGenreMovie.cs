@@ -7,6 +7,8 @@ namespace Filmsystemet.Models
         public int MovieId { get; set; }
         public int PersonId { get; set; }
         public int GenreId { get; set; }
-        public string MovieLink { get; set; }
+        public string? MovieLink { get; set; }
+        public int Rating { get; set; }
+
     }
 }

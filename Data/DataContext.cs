@@ -5,6 +5,8 @@ namespace Filmsystemet.Data
     public class DataContext : DbContext
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
+
+        // Define DbSet properties for each entity in the database
         public DbSet<Person> Persons { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Genre> Genres { get; set; }
@@ -12,14 +14,13 @@ namespace Filmsystemet.Data
         public DbSet<LinkPersonGenreMovie> LinkPersonGenreMovies { get; set; }
         public DbSet<GenreMovie> GenreMovies { get; set; }
 
+        // Configure the relationships and mappings between entities in the database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configurations of the entity mappings and relationships
-
-            //PKs of single keys
+            // Primary keys for single keys
 
             modelBuilder.Entity<Person>()
-        .HasKey(p => p.Id);
+                .HasKey(p => p.Id);
 
             modelBuilder.Entity<Movie>()
                 .HasKey(m => m.Id);
@@ -27,7 +28,7 @@ namespace Filmsystemet.Data
             modelBuilder.Entity<Genre>()
                 .HasKey(g => g.Id);
 
-            // Person-Genre table
+            // Configure Person-Genre table
             modelBuilder.Entity<PersonGenre>()
                 .HasKey(pg => new { pg.PersonId, pg.GenreId });
 
@@ -41,7 +42,7 @@ namespace Filmsystemet.Data
                 .WithMany()
                 .HasForeignKey(pg => pg.GenreId);
 
-            // LinkPersonGenreMovie table
+            // Configure LinkPersonGenreMovie table
             modelBuilder.Entity<LinkPersonGenreMovie>()
                 .HasKey(l => new { l.PersonId, l.GenreId, l.MovieId });
 
@@ -60,9 +61,9 @@ namespace Filmsystemet.Data
                 .WithMany()
                 .HasForeignKey(l => l.MovieId);
 
-            // Genre-Movie table
+            // Configure Genre-Movie table
             modelBuilder.Entity<GenreMovie>()
-                .HasKey(gm => new { gm.MovieId, gm.GenreId });
+                .HasKey(gm => new { gm.GenreId, gm.MovieId });
 
             modelBuilder.Entity<GenreMovie>()
                 .HasOne<Genre>()

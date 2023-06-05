@@ -5,7 +5,7 @@
 namespace Filmsystemet.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedModelsAddedRelationships : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,6 +16,7 @@ namespace Filmsystemet.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TMDBId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -31,7 +32,6 @@ namespace Filmsystemet.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    GenreId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ReleaseYear = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -40,76 +40,18 @@ namespace Filmsystemet.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GenrePerson",
+                name: "Persons",
                 columns: table => new
                 {
-                    GenreId = table.Column<int>(type: "int", nullable: false),
-                    PersonsId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GenrePerson", x => new { x.GenreId, x.PersonsId });
-                    table.ForeignKey(
-                        name: "FK_GenrePerson_Genres_GenreId",
-                        column: x => x.GenreId,
-                        principalTable: "Genres",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GenrePerson_Persons_PersonsId",
-                        column: x => x.PersonsId,
-                        principalTable: "Persons",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PersonGenres",
-                columns: table => new
-                {
-                    PersonId = table.Column<int>(type: "int", nullable: false),
-                    GenreId = table.Column<int>(type: "int", nullable: false),
-                    Rating = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PersonGenres", x => new { x.PersonId, x.GenreId });
-                    table.ForeignKey(
-                        name: "FK_PersonGenres_Genres_GenreId",
-                        column: x => x.GenreId,
-                        principalTable: "Genres",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PersonGenres_Persons_PersonId",
-                        column: x => x.PersonId,
-                        principalTable: "Persons",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GenreMovie",
-                columns: table => new
-                {
-                    GenreId = table.Column<int>(type: "int", nullable: false),
-                    MoviesId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GenreMovie", x => new { x.GenreId, x.MoviesId });
-                    table.ForeignKey(
-                        name: "FK_GenreMovie_Genres_GenreId",
-                        column: x => x.GenreId,
-                        principalTable: "Genres",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GenreMovie_Movies_MoviesId",
-                        column: x => x.MoviesId,
-                        principalTable: "Movies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_Persons", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -121,7 +63,7 @@ namespace Filmsystemet.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GenreMovies", x => new { x.MovieId, x.GenreId });
+                    table.PrimaryKey("PK_GenreMovies", x => new { x.GenreId, x.MovieId });
                     table.ForeignKey(
                         name: "FK_GenreMovies_Genres_GenreId",
                         column: x => x.GenreId,
@@ -143,7 +85,7 @@ namespace Filmsystemet.Migrations
                     MovieId = table.Column<int>(type: "int", nullable: false),
                     PersonId = table.Column<int>(type: "int", nullable: false),
                     GenreId = table.Column<int>(type: "int", nullable: false),
-                    MovieLink = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    MovieLink = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -168,20 +110,34 @@ namespace Filmsystemet.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_GenreMovie_MoviesId",
-                table: "GenreMovie",
-                column: "MoviesId");
+            migrationBuilder.CreateTable(
+                name: "PersonGenres",
+                columns: table => new
+                {
+                    PersonId = table.Column<int>(type: "int", nullable: false),
+                    GenreId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PersonGenres", x => new { x.PersonId, x.GenreId });
+                    table.ForeignKey(
+                        name: "FK_PersonGenres_Genres_GenreId",
+                        column: x => x.GenreId,
+                        principalTable: "Genres",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PersonGenres_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
-                name: "IX_GenreMovies_GenreId",
+                name: "IX_GenreMovies_MovieId",
                 table: "GenreMovies",
-                column: "GenreId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GenrePerson_PersonsId",
-                table: "GenrePerson",
-                column: "PersonsId");
+                column: "MovieId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LinkPersonGenreMovies_GenreId",
@@ -203,13 +159,7 @@ namespace Filmsystemet.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "GenreMovie");
-
-            migrationBuilder.DropTable(
                 name: "GenreMovies");
-
-            migrationBuilder.DropTable(
-                name: "GenrePerson");
 
             migrationBuilder.DropTable(
                 name: "LinkPersonGenreMovies");
@@ -222,6 +172,9 @@ namespace Filmsystemet.Migrations
 
             migrationBuilder.DropTable(
                 name: "Genres");
+
+            migrationBuilder.DropTable(
+                name: "Persons");
         }
     }
 }

@@ -7,27 +7,33 @@ using System.Threading.Tasks;
 
 namespace Filmsystemet.Controllers
 {
-[ApiController]
-[Route("api/[controller]")]
-public class MovieApiController : ControllerBase
-{
-    private readonly MovieService _movieService;
-
-    public MovieApiController(IConfiguration configuration)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class MovieApiController : ControllerBase
     {
-        string apiKey = configuration.GetValue<string>("ApiKey");
-        _movieService = new MovieService(apiKey);
-    }
+        private readonly DataContext context;
+        private readonly MovieService _movieService;
 
-        [HttpGet("/genre/search")]
-        public async Task<ActionResult<List<MovieInformation>>> SearchMovies([FromQuery] string genre)
+        public MovieApiController(IConfiguration configuration)
         {
-            List<MovieInformation> movies = await _movieService.SearchMoviesAsync(genre);
+            string apiKey = configuration.GetValue<string>("ApiKey");
+            Console.WriteLine($"API Key: {apiKey}");
+            _movieService = new MovieService(apiKey);
+            Console.WriteLine($"API Key: {apiKey}");
+
+        }
+
+        [HttpGet("genres-suggestion")]
+        public async Task<ActionResult<List<MovieInformation>>> SearchMovies([FromQuery] string query)
+        {
+            List<MovieInformation> movies = await _movieService.SearchMoviesAsync(query);
             if (movies == null)
             {
                 return NotFound();
             }
             return movies;
         }
+
+
     }
 }

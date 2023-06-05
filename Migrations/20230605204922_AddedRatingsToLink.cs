@@ -5,25 +5,25 @@
 namespace Filmsystemet.Migrations
 {
     /// <inheritdoc />
-    public partial class RemovedRatingFromGenres : Migration
+    public partial class AddedRatingsToLink : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
+            migrationBuilder.AddColumn<int>(
                 name: "Rating",
-                table: "PersonGenres");
+                table: "LinkPersonGenreMovies",
+                type: "int",
+                nullable: false,
+                defaultValue: 0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
+            migrationBuilder.DropColumn(
                 name: "Rating",
-                table: "PersonGenres",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+                table: "LinkPersonGenreMovies");
         }
     }
 }

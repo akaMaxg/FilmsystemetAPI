@@ -9,10 +9,20 @@ namespace Filmsystemet.Controllers
     public class MovieGenrePersonController : ControllerBase
     {
         private readonly DataContext context;
+        private DbSet<LinkPersonGenreMovie> personGenreMovies;
+
 
         public MovieGenrePersonController(DataContext dbContext)
         {
             context = dbContext;
+            this.personGenreMovies = context.LinkPersonGenreMovies;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<LinkPersonGenreMovie>>> GetPersonGenreMovie()
+        {
+            // Retrieve all persons from the database
+            return Ok(await personGenreMovies.ToListAsync());
         }
 
         [HttpPost]

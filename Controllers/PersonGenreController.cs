@@ -15,6 +15,7 @@ namespace Filmsystemet.Controllers
             context = dbContext;
         }
 
+        // POST: api/persongenre
         [HttpPost]
         public IActionResult CreatePersonGenre(PersonGenre personGenre)
         {
