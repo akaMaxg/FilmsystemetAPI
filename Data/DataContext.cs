@@ -6,7 +6,7 @@ namespace Filmsystemet.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
-        // Define DbSet properties for each entity in the database
+        // Definerar DbSet för alla entiteter 
         public DbSet<Person> Persons { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<Genre> Genres { get; set; }
@@ -14,10 +14,9 @@ namespace Filmsystemet.Data
         public DbSet<LinkPersonGenreMovie> LinkPersonGenreMovies { get; set; }
         public DbSet<GenreMovie> GenreMovies { get; set; }
 
-        // Configure the relationships and mappings between entities in the database
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder) //Konfiguerar relationer mellan objekt/entiter i dbo
         {
-            // Primary keys for single keys
+            // Primary keys för enkel-tabeller
 
             modelBuilder.Entity<Person>()
                 .HasKey(p => p.Id);
@@ -28,7 +27,7 @@ namespace Filmsystemet.Data
             modelBuilder.Entity<Genre>()
                 .HasKey(g => g.Id);
 
-            // Configure Person-Genre table
+            // Person-Genre tabell
             modelBuilder.Entity<PersonGenre>()
                 .HasKey(pg => new { pg.PersonId, pg.GenreId });
 
@@ -42,7 +41,7 @@ namespace Filmsystemet.Data
                 .WithMany()
                 .HasForeignKey(pg => pg.GenreId);
 
-            // Configure LinkPersonGenreMovie table
+            // Person-Genre-Film tabell
             modelBuilder.Entity<LinkPersonGenreMovie>()
                 .HasKey(l => new { l.PersonId, l.GenreId, l.MovieId });
 
@@ -61,7 +60,7 @@ namespace Filmsystemet.Data
                 .WithMany()
                 .HasForeignKey(l => l.MovieId);
 
-            // Configure Genre-Movie table
+            // Genre-Film tabell
             modelBuilder.Entity<GenreMovie>()
                 .HasKey(gm => new { gm.GenreId, gm.MovieId });
 
@@ -75,7 +74,7 @@ namespace Filmsystemet.Data
                 .WithMany()
                 .HasForeignKey(gm => gm.MovieId);
 
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder); // Kör modelbuildern
         }
     }
 }

@@ -11,49 +11,42 @@ namespace Filmsystemet.Controllers
         private readonly DataContext context;
         private DbSet<LinkPersonGenreMovie> personGenreMovies;
 
-
         public MovieGenrePersonController(DataContext dbContext)
         {
             context = dbContext;
             this.personGenreMovies = context.LinkPersonGenreMovies;
         }
 
-        [HttpGet]
+        [HttpGet] //Hämtar en lista av Person-Genre-Film entiteter
         public async Task<ActionResult<List<LinkPersonGenreMovie>>> GetPersonGenreMovie()
         {
-            // Retrieve all persons from the database
-            return Ok(await personGenreMovies.ToListAsync());
+            return Ok(await personGenreMovies.ToListAsync()); //Staus OK
         }
 
-        [HttpPost]
+        [HttpPost] //Skapa ny entitet
         public IActionResult CreateMovieGenrePerson(LinkPersonGenreMovie movieGenrePerson)
         {
-            // Validate the input model if necessary
-
             // Retrieve the associated Movie, Person, and Genre entities based on the provided IDs
-            Movie movie = context.Movies.Find(movieGenrePerson.MovieId);
-            Person person = context.Persons.Find(movieGenrePerson.PersonId);
-            Genre genre = context.Genres.Find(movieGenrePerson.GenreId);
+            Movie movie = context.Movies.Find(movieGenrePerson.MovieId); //Hämtar från Filmtabellen
+            Person person = context.Persons.Find(movieGenrePerson.PersonId);//Hämtar från Persontabellen
+            Genre genre = context.Genres.Find(movieGenrePerson.GenreId); //Hämtar från Genretabellen
 
-            if (movie == null || person == null || genre == null)
+            if (movie == null || person == null || genre == null) //Säkerställer input
             {
-                // Handle invalid MovieId, PersonId, or GenreId
                 return BadRequest("Invalid MovieId, PersonId, or GenreId");
             }
 
-            // Create a new MovieGenrePerson entity and set the relationships
-            var newMovieGenrePerson = new LinkPersonGenreMovie
+            var newMovieGenrePerson = new LinkPersonGenreMovie //Skapar ny entitet 
             {
-                MovieId = movieGenrePerson.MovieId,
+                //Sätter FKs
+                MovieId = movieGenrePerson.MovieId, 
                 PersonId = movieGenrePerson.PersonId,
                 GenreId = movieGenrePerson.GenreId,
             };
 
-            // Save the new entity to the database
             context.LinkPersonGenreMovies.Add(newMovieGenrePerson);
             context.SaveChanges();
 
-            // Return the created entity or any other response as needed
             return Ok(newMovieGenrePerson);
         }
     }

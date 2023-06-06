@@ -7,20 +7,20 @@ namespace Filmsystemet.Controllers
     [Route("api/[controller]")]
     public class GenreController : ControllerBase
     {
-        private readonly DataContext context; // Data context for accessing the database
-        private readonly DbSet<Genre> genres; // DbSet for working with the Genre entity
-
+        private readonly DataContext context; 
+        private readonly DbSet<Genre> genres; 
 
         public GenreController(DataContext context)
         {
-            this.context = context; // Assign the injected data context to the local variable
-            this.genres = context.Genres;// Assign the Genres DbSet from the data context to the local variable   
+            //Konstruktor som hanterar data kontext och entitet, lokalt
+            this.context = context; 
+            this.genres = context.Genres;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Person>>> GetPersons()
+        public async Task<ActionResult<List<Genre>>> GetGenres() 
         {
-            return Ok(await genres.ToListAsync()); // Retrieve all persons from the database and return them as an ActionResult
+            return Ok(await genres.ToListAsync()); //Returnerar alla genre-entiter i en lista
         }
     }
 }

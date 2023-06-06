@@ -12,7 +12,6 @@ namespace Filmsystemet.Controllers
     {
         private readonly DataContext context;
         private readonly DbSet<Person> persons;
-
         public PersonController(DataContext context)
         {
             this.context = context;
@@ -22,6 +21,7 @@ namespace Filmsystemet.Controllers
         [HttpGet("All genres for one person")]
         public IActionResult GetPersonGenres(int personId)
         {
+            //LINQ-query för att hämta en persom och dess gillade genres från Persons dbo och Genres dbo 
             var query = from person in context.Persons
                         join personGenre in context.PersonGenres on person.Id equals personGenre.PersonId
                         join genre in context.Genres on personGenre.GenreId equals genre.Id
@@ -32,30 +32,30 @@ namespace Filmsystemet.Controllers
                             GenreName = genre.Name,
                             GenreDescription = genre.Description,
                         };
-
             return Ok(query.ToList());
         }
 
         [HttpGet("All Ratings for one person")]
         public IActionResult GetPersonRatings(int personId)
         {
+            //LINQ-query för att hämta en persom och dess ratings samt till vilka filmer 
             var query = from link in context.LinkPersonGenreMovies
                         join movie in context.Movies on link.MovieId equals movie.Id
                         join person in context.Persons on link.PersonId equals person.Id
-                        where link.PersonId == 1
+                        where link.PersonId == personId
                         select new
                         {
                             PersonName = person.FirstName,
                             Rating = link.Rating,
                             MovieTitle = movie.Title
                         };
-
             return Ok(query.ToList());
         }
 
         [HttpGet("All Movies for one person")]
         public IActionResult GetPersonMovies(int personId)
         {
+            //LINQ-query för att hämta en persom och dess filmer samt genre filmerna har 
             var query = from link in context.LinkPersonGenreMovies
                         join movie in context.Movies on link.MovieId equals movie.Id
                         join genre in context.Genres on link.GenreId equals genre.Id
@@ -66,50 +66,57 @@ namespace Filmsystemet.Controllers
                             MovieName = movie.Title,
                             GenreName = genre.Name
                         };
-
             return Ok(query.ToList());
         }
 
-
-        // GET: api/persons
         [HttpGet("Retrieve all persons")]
         public async Task<ActionResult<List<Person>>> GetPersons()
         {
-            // Retrieve all persons from the database
+            // Hämtar alla Persons-entiteter från db
             return Ok(await persons.ToListAsync());
         }
 
-        // GET: api/persons/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<Person>> GetPerson(int id)
         {
-            // Find the person with the specified ID in the database
+            //Hämtar en person på Id
             var person = await persons.FindAsync(id);
             if (person == null)
             {
-                // If person is not found, return HTTP 400 Bad Request status
                 return BadRequest("Person not found.");
             }
-            // Return the person as a response with HTTP 200 OK status
             return Ok(person);
         }
 
-        // POST: api/persons
+        [HttpPost("Create new genre for a person")]
+        public IActionResult CreatePersonGenre(PersonGenre personGenre)
+        {
+            Person person = context.Persons.Find(personGenre.PersonId);
+            Genre genre = context.Genres.Find(personGenre.GenreId);
+
+            //Kontrollerar validitet annars felmeddelande
+            if (person == null || genre == null)
+            {
+                return BadRequest("Invalid PersonId or GenreId");
+            }
+
+            var newPersonGenre = new PersonGenre
+            {
+                PersonId = personGenre.PersonId,
+                GenreId = personGenre.GenreId,
+            };
+            context.PersonGenres.Add(newPersonGenre);
+            context.SaveChanges();
+            return Ok(newPersonGenre);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Person>> AddPerson(Person person)
         {
-            // Add the new person to the persons DbSet
+            // Lägger till ny person till person dbo
             persons.Add(person);
             await context.SaveChangesAsync();
-            // Return the newly created person as a response with HTTP 201 Created status
-            // and include the URL of the newly created person in the response headers
             return CreatedAtAction(nameof(GetPerson), new { id = person.Id }, person);
-        }
-
-        private bool PersonExists(int id)
-        {
-            // Check if a person with the specified ID exists in the persons DbSet
-            return persons.Any(p => p.Id == id);
         }
     }
 }
